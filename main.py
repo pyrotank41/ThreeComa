@@ -1,0 +1,1 @@
+print("Hello Money Makers, Welcome to the best tool to make money!")
