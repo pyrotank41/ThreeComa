@@ -1,3 +1,17 @@
+''' 
+Author: Pyrotank
+Description: this program fetches a list of Nasdaq and non Nasdaq listed tickers'
+ToDo:
+    *currently we are saving Bar seperated values to CSV, but we will eventually update
+     the database. 
+    
+Note: This program should run everytime we need to update the list of tickers 
+    the frequency of to run this program is not clear yet but since we are just 
+    grabbing a file from a remote nasdaq server and converting it to CSV, it is not 
+    computationallty heavy. hence we can call it multiple times a day untill the frequency 
+    is clear
+'''
+
 import wget
 import os
 import pandas as pd # we are using pandas to convert Bar seperated values to csv.
@@ -19,7 +33,6 @@ def _download_file(url, path):
 # we are just cleaning the txt file provided and generating an equivalent CSV file 
 def _convert_bar_seperated_txt_to_CSV(from_path, to_path):
     df = pd.read_csv(from_path, sep="|")
-    # df = df.set_index('Symbol')
     print(df.head)
     df.to_csv(to_path, index=False)
 
