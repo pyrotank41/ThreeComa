@@ -7,3 +7,7 @@ ALPACA_PAPER_SECRET = '<your secret goes here>'
 ALPACA_LIVE_API_KEY = '<your api key here>'
 ALPACA_LIVE_SECRET  = '<your secret goes here>'
 # ---------------------------------------------------------
+
+# alpha vantage--------------------------------------------
+ALPHA_API_KEY = '<your api key here>'
+# ---------------------------------------------------------
