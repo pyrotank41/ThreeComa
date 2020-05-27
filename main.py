@@ -11,6 +11,7 @@ import time
 
 #user defined imports ----------------------------------------------------------
 import tickers  
+import alpaca
 import config # FIXME use config_api, this import is for development only
 
 print("*****************************************************************")
@@ -25,8 +26,7 @@ def updateTickerList():
     tickers.downloadOtherListed()
 
 # getAlpacaApiInstance ----------------------------------------------------------
-# generates returns REST API instance takes in a parameter for live account.
-# if live = True, you will get live rest api instance.
+
 def getAlpacaApiInstance(live=False):
     url = ''
     if live: url = 'https://api.alpaca.markets'
@@ -65,7 +65,7 @@ def getGappersInPercent(api, tickers, gap_percent=0.0, time_frame='minute', no_o
                     change[ticker] = (percent_change, percent_vol_change, bars[-1].t)
 
             print(f'''{ticker} moved {percent_change}% with {percent_vol_change}% volume\
-                change over the last {no_of_candles} {time_frame} on {bars[-1].t}''')
+                change over the last {no_of_candles} {time_frame} from {bars[0].t} to {bars[-1].t}''')
         except Exception as e:
             print(e)
 
@@ -89,8 +89,8 @@ def main():
     # hence will be putting the following line of code elsewhere later during development.
     # updateTickerList()
     # tickEvery(hello)
-    api = getAlpacaApiInstance()
-    print(getGappersInPercent(api, ['AAL','AAPL', 'TSLA', 'LK'], gap_percent=1))
+    alp = alpaca.Alpaca(config.ALPACA_PAPER_API_KEY, config.ALPACA_PAPER_SECRET)
+    print(alp.getGappersInPercent(['AAL', 'AAL', 'AAL','AAL','AAPL', 'TSLA', 'LK'], gap_percent=1))
 
 
 main()    

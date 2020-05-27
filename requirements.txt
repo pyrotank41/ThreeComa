@@ -1,3 +1,4 @@
+#following python lib is to be installed for the program to run.
 pandas
 wget
 alpaca-trade-api
