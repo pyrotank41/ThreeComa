@@ -25,9 +25,17 @@ class Alpaca:
         self._live = live
     
     # public data members and functions.
+
+    # getApi ------------------------------------------------------------------------
+    # returns the REST API instance of alpaca. 
+    # It is intended to use whenever there is a function that is not supported my this class yet.
     def getApi(self):
         return self._api
 
+    # getGappersInPercent------------------------------------------------------------
+    # A function to return percentage gap price and volume in a timeframe of a stocks 
+    # it takes alpaca api instance, list of tickers, time frame(size of a candle) and
+    # No of candels(number of time interval we are looking for a gap) 
     def getGappersInPercent(self, tickers, gap_percent=0.0, time_frame='minute', no_of_candles=3):
 
         barset = self._api.get_barset(tickers, time_frame, no_of_candles)
@@ -59,3 +67,6 @@ class Alpaca:
                 print(e)
 
         return change
+
+
+    
