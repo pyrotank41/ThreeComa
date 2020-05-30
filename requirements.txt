@@ -1,2 +1,20 @@
 #following python lib is to be installed for the program to run.
-pip install psycopg2, alpaca-trade-api, wget, pandas
+
+
+psycopg2, # check the requirements for its installation, for now i am using postgresql on local server 
+'''
+Prerequisites¶
+The current psycopg2 implementation supports:
+
+Python version 2.7
+Python 3 versions from 3.4 to 3.8
+PostgreSQL server versions from 7.4 to 12
+PostgreSQL client library version from 9.1
+
+sudo apt install libpq-dev && pip3 install psycopg2
+
+'''
+
+alpaca-trade-api,
+wget,
+pandas
