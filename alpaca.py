@@ -32,6 +32,9 @@ class Alpaca:
     def getApi(self):
         return self._api
 
+    def getPoly(self):
+        return self.getApi().polygon    
+
     # getGappersInPercent------------------------------------------------------------
     # A function to return percentage gap price and volume in a timeframe of a stocks 
     # it takes alpaca api instance, list of tickers, time frame(size of a candle) and
@@ -68,5 +71,38 @@ class Alpaca:
 
         return change
 
+    '''
+    return format of a single asset (for reference purposes)
+    Asset({     'class': 'us_equity',
+                'easy_to_borrow': False,
+                'exchange': 'OTC',
+                'id': 'c5154321-8b7c-4ff4-9b10-8b0e9ad27247',
+                'marginable': False,
+                'name': 'Ability Inc.  Ordinary Shares',
+                'shortable': False,
+                'status': 'inactive',
+                'symbol': 'ABILF',
+                'tradable': False})
 
-    
+    '''
+    # returns a list of all assets in a form of a tuple 
+    # (ticker symbol, name, exchange, tradable)
+    def getAssets(self):
+        assets = self._api.list_assets()
+        symbols = []
+        for a in assets:
+            if 'DELISTED' not in a.symbol: # getting rid of tickers that are delisted.
+                if a.name.find("'") != -1: # adding additional 
+                    name = a.name.replace("'", "''")
+                    # print(s)
+                else: 
+                    name = a.name
+                symbols.append((a.symbol, name, a.exchange, 
+                            a.tradable, a.shortable, a.marginable)) 
+
+        symbols.sort(key = lambda x: x[0])
+
+        # for s in symbols:
+        #     print(s)
+        # print(len(symbols))
+        return symbols

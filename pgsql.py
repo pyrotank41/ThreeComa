@@ -8,61 +8,76 @@ from psycopg2 import Error
 class Pgsql:
     # constructor ----------------------------------------------------------
     # establishes a connection to the database and holds it open untll destructor is called.
-    def __init__(self, usrname, password, dbname, host, port='5432'):
+    def __init__(self, usrname, password, dbname, host, port='5432', debug=False):
         try:
             self.connection = psycopg2.connect(user = usrname,
                                         password = password,
                                         host = host,
                                         port = port,
                                         database = dbname)
-
-            self.cursor = self.connection.cursor()
+            print(f"[*] Connected to postgreSQL server @ {host}:{port}\n")
+            cursor = self.connection.cursor()
             # Print PostgreSQL Connection properties
-            print ( self.connection.get_dsn_parameters(),"\n")
+            if debug: print ( self.connection.get_dsn_parameters(),"\n")
 
             # Print PostgreSQL version
-            self.cursor.execute("SELECT version();")
-            record = self.cursor.fetchone()
-            print("You are connected to - ", record,"\n")
+            if debug:
+                cursor.execute("SELECT version();")
+                record = cursor.fetchone()
+                print(record,"\n")
   
         except (Exception, psycopg2.DatabaseError) as error :
-            print ("Error while establishing the connection: ", error)
+            print ("[*] Error while establishing the connection: ", error)
+        finally:
+            cursor.close()
   
-    # destructor------------------------------------------------------------
+    # Destructor ------------------------------------------------------------------
     def __del__(self):
         #closing database connection.
         if(self.connection):    
-            self.cursor.close()
             self.connection.close()
-            print("PostgreSQL connection is closed")
-    
-    # executeQuery ----------------------------------------------------------
-    def executeSelectQuery(self, query):
+            print("\n[x] Connection to PostgreSQL server is closed ...")
+
+    # Returns the connection to the db -------------------------------------------- 
+    def getConnection(self):
+        return self.connection
+
+    # ExecuteQuery -----------------------------------------------------------------
+    def executeQuery(self, query, q_type=''):
         try:
-            self.cursor.execute(query)
+            cursor = self.connection.cursor()
+            cursor.execute(query)
             self.connection.commit()
-            info = self.cursor.fetchall()
-
+            return cursor.fetchall()
+            
         except (Exception, psycopg2.DatabaseError) as error:
-            print('Error while executing a query: ', error)
-
-        return info
-    # getTables --------------------------------------------------------
+            if str(error) != "no results to fetch": 
+                print(query)
+                print(f'Error while executing {q_type} Query: ', error)
+            else: 
+                return str(error)
+            # if error has occured, cancle the changes and rollback to orignal state 
+            # before the the query was executed. 
+            self.connection.rollback()
+        
+        finally:
+            # print("closing cursor")
+            cursor.close()        
+    
+    # getTables ------------------------------------------------------------------
     def getTables(self):
         q = "SELECT table_schema, table_name FROM information_schema.tables "+ \
             "WHERE (table_schema = 'public')" + \
             "ORDER BY table_schema, table_name;"
-        self.cursor.execute(q)
-        return self.cursor.fetchall()
-        
+        res =  self.executeQuery(q, 'SELECT')
+        if res: return res     
+    # getColumns -----------------------------------------------------------------
+    def getColumns(self, table_name):
+        q = f"select column_name, data_type from information_schema.columns where table_name = '{table_name}';"
+        res = self.executeQuery(q)
+        return res
+    
     # addTable --------------------------------------------------------------
     def addTable(self, query):
-        try:
-            self.cursor.execute(query)
-            self.connection.commit()
-            print(cursor.fetchall())
-            
-        
-        except (Exception, psycopg2.DatabaseError) as error:
-            print('Error while creating a table: ', error)
+        self.executeQuery(query, 'Get Table')
         
