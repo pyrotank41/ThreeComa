@@ -25,11 +25,13 @@ class Pgsql:
                 cursor.execute("SELECT version();")
                 record = cursor.fetchone()
                 print(record,"\n")
-  
+
+            cursor.close()
+
         except (Exception, psycopg2.DatabaseError) as error :
             print ("[*] Error while establishing the connection: ", error)
-        finally:
-            cursor.close()
+
+            
   
     # Destructor ------------------------------------------------------------------
     def __del__(self):
@@ -48,7 +50,9 @@ class Pgsql:
             cursor = self.connection.cursor()
             cursor.execute(query)
             self.connection.commit()
-            return cursor.fetchall()
+            resp = cursor.fetchall()
+            cursor.close()
+            return resp
             
         except (Exception, psycopg2.DatabaseError) as error:
             if str(error) != "no results to fetch": 
@@ -58,11 +62,7 @@ class Pgsql:
                 return str(error)
             # if error has occured, cancle the changes and rollback to orignal state 
             # before the the query was executed. 
-            self.connection.rollback()
-        
-        finally:
-            # print("closing cursor")
-            cursor.close()        
+            self.connection.rollback()      
     
     # getTables ------------------------------------------------------------------
     def getTables(self):

@@ -129,12 +129,12 @@ def main():
     poly = alp.getPoly()
     
     # print(alp.getPoly().get(f"/reference/splits/{'SFUN'}",version='v2'))
-    # polyticker = alp.getPoly().get(f"/reference/tickers?sort=ticker&market=STOCKS&perpage=50&page=716",version='v2')
+    # polyticker = alp.getPoly().get(f"/reference/tickers?sort=ticker&market=STOCKS&perpage=50&page=715",version='v2')
     # print(polyticker['count']/polyticker['perPage'])
     # for i in polyticker['tickers']:
     #     print(i['ticker'])
     
-    gappers(50)     
+    gappers(30)     
     
     # tickers.sort()
     # print(tickers[0])
